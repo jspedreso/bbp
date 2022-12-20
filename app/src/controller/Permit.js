@@ -2,7 +2,6 @@ import axios from "axios";
 import { useQuery } from "@tanstack/react-query";
 /* import { toast } from "react-toastify"; */
 const baseURL = "http://localhost:9000";
-
 const Permit = {
   Get: (props) => {
     const pagination = { pageIndex: props.pageIndex, pageSize: props.pageSize };
@@ -23,6 +22,7 @@ const Permit = {
   },
   Add: (formData) => {
     const res = axios.post(`${baseURL}/permit`, formData);
+
     return res;
   },
   Update: (formData) => {

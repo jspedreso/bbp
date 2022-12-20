@@ -6,6 +6,7 @@ import Moment from "react-moment";
 import { Delete, Edit } from "@mui/icons-material";
 import PermitForm from "./PermitForm";
 import { Con } from "../../controller/Permit";
+import { usePickerState } from "@mui/x-date-pickers/internals/hooks/usePickerState";
 const moment = require("moment");
 const PermitList = () => {
   const [createModalOpen, setCreateModalOpen] = useState(false);
@@ -26,6 +27,8 @@ const PermitList = () => {
     sorting: sorting,
   });
   const [tableData, setTableData] = useState([]);
+  const [rowVal, setRowVal] = useState();
+
   const handleCreateNewRow = (values) => {
     tableData.push(values);
     setTableData([...tableData]);
@@ -99,6 +102,14 @@ const PermitList = () => {
         header: "Valid Until",
       },
       {
+        accessorKey: "latitude",
+        header: "Lat",
+      },
+      {
+        accessorKey: "longitude",
+        header: "Long",
+      },
+      {
         accessorKey: "attachment1",
         header: "Attachment1",
         columnDefType: "file",
@@ -133,8 +144,13 @@ const PermitList = () => {
     const result = Object.fromEntries(Object.entries(currentRow));
     row["original"] = result;
     row["_valuesCache"] = result;
-    console.log(row);
-    table.setEditingRow(row);
+
+    setRowVal(result);
+    console.log(rowVal);
+    /*console.log(result); */
+    setCreateModalOpen(true);
+
+    /*  table.setEditingRow(row); */
   };
 
   return (
@@ -182,11 +198,11 @@ const PermitList = () => {
                 <Edit />
               </IconButton>
             </Tooltip>
-            <Tooltip arrow placement='left' title='Edit'>
+            {/*  <Tooltip arrow placement='left' title='Edit'>
               <IconButton onClick={() => table.setEditingRow(row)}>
                 <Edit />
               </IconButton>
-            </Tooltip>
+            </Tooltip> */}
             <Tooltip arrow placement='right' title='Delete'>
               <IconButton color='error' onClick={() => handleDeleteRow(row)}>
                 <Delete />
@@ -206,7 +222,7 @@ const PermitList = () => {
         }}
       />
 
-      <PermitForm columns={columns} open={createModalOpen} onClose={() => setCreateModalOpen(false)} onSubmit={handleCreateNewRow} onRefetch={refetch}></PermitForm>
+      <PermitForm columns={columns} open={createModalOpen} onClose={() => setCreateModalOpen(false)} onSubmit={handleCreateNewRow} onRefetch={refetch} rowVal={rowVal}></PermitForm>
     </Box>
   );
 };

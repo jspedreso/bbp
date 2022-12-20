@@ -1,6 +1,7 @@
 const express = require("express");
 const app = express();
 const router = express.Router();
+
 const bbp = require("../dbconnect");
 const db = "bbp";
 router.param("permitNum", (req, res, next, id) => {
@@ -44,17 +45,16 @@ router.put("/", (req, res, next) => {
 
 router.post("/", (req, res, next) => {
   var fldStr = "";
-  var fldVal = [];
+  var fldVal = "";
   for (const [key, value] of Object.entries(req.body)) {
     fldStr += `${key},`;
-    fldVal.push(value);
+    fldVal += value === "" ? "''," : `'${value}',`;
   }
 
-  let sql = `INSERT INTO ${db}.permit (${fldStr.slice(0, -1)}) VALUES(?,?,?,?,?,?,?,?)`;
-
+  let sql = `INSERT INTO ${db}.permit (${fldStr.slice(0, -1)}) VALUES(${fldVal.slice(0, -1)})`;
   bbp.query(sql, fldVal, (err, result) => {
     if (err) {
-      throw err;
+      res.send(err);
     } else {
       res.send(result);
     }
@@ -66,7 +66,7 @@ router.delete("/:permitNum", (req, res, next) => {
   /* console.log(values); */
   bbp.query(sql, [req.params], (err, result) => {
     if (err) {
-      throw err;
+      res.send(err);
     } else {
       console.log(sql);
       res.send(result);
