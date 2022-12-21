@@ -35,6 +35,7 @@ router.put("/", (req, res, next) => {
   values = req.body;
   let sql = "UPDATE permit SET ? WHERE ?";
   bbp.query(sql, [values, { permitNum: values.permitNum }], (err, result) => {
+    console.log(sql);
     if (err) {
       throw err;
     } else {

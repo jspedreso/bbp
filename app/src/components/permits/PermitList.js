@@ -6,7 +6,6 @@ import Moment from "react-moment";
 import { Delete, Edit } from "@mui/icons-material";
 import PermitForm from "./PermitForm";
 import { Con } from "../../controller/Permit";
-import { usePickerState } from "@mui/x-date-pickers/internals/hooks/usePickerState";
 const moment = require("moment");
 const PermitList = () => {
   const [createModalOpen, setCreateModalOpen] = useState(false);
@@ -135,18 +134,17 @@ const PermitList = () => {
     for (const [key, value] of Object.entries(row.original)) {
       if (value != null) {
         let x = moment(value);
-        currentRow[key] = key === "valid" ? x.format("MMMM DD, YYYY") : value;
+        currentRow[key] = value;
       } else {
-        currentRow[key] = key === "issued" ? dateIssued.format("MMMM DD, YYYY") : "";
+        currentRow[key] = key === "valid" || key === "issued" ? dateIssued.format("MMMM DD, YYYY") : value;
       }
     }
 
     const result = Object.fromEntries(Object.entries(currentRow));
     row["original"] = result;
     row["_valuesCache"] = result;
+    setRowVal(row.original);
 
-    setRowVal(result);
-    console.log(rowVal);
     /*console.log(result); */
     setCreateModalOpen(true);
 
@@ -222,7 +220,7 @@ const PermitList = () => {
         }}
       />
 
-      <PermitForm columns={columns} open={createModalOpen} onClose={() => setCreateModalOpen(false)} onSubmit={handleCreateNewRow} onRefetch={refetch} rowVal={rowVal}></PermitForm>
+      {createModalOpen && <PermitForm columns={columns} open={createModalOpen} onClose={() => setCreateModalOpen(false)} onSubmit={handleCreateNewRow} onRefetch={refetch} rowVal={rowVal} />}
     </Box>
   );
 };

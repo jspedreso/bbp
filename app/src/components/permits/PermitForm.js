@@ -12,6 +12,8 @@ import Divider from "@mui/material/Divider";
 import { styled } from "@mui/material/styles";
 import { MuiFileInput } from "mui-file-input";
 import FormControl from "@mui/material/FormControl";
+
+import moment from "moment";
 import { MRT_ShowHideColumnsButton } from "material-react-table";
 /* import { GoogleMap, useJsApiLoader } from "@react-google-maps/api";
  */
@@ -30,19 +32,27 @@ const center = {
 const toasterCss = { position: "top-right", autoClose: 5000, hideProgressBar: false, closeOnClick: true, pauseOnHover: true, draggable: true, progress: undefined, theme: "colored" };
 
 const PermitForm = ({ open, columns, onClose, onSubmit, onRefetch, rowVal }) => {
-  console.log(rowVal);
+  /*  console.log(rowVal !== undefined ? rowVal : "No Value"); */
   const [values, setValues] = useState(() =>
     columns.reduce((acc, column) => {
       if (column.columnDefType !== "data") acc[column.accessorKey ?? ""] = "";
       return acc;
     }, {})
   );
-
+  var title = rowVal !== undefined ? "Edit" : "Create New";
+  var q = new Date(rowVal !== undefined ? rowVal.issued : null);
+  /* moment(q).format("M d, YYYY"); */
+  /*   console.log(q); */
+  /*  console.log("default =" + rowVal.issued);
+  console.log(Date(rowVal.issued)); */
+  var x = rowVal !== undefined ? rowVal.issued : new Date();
+  var y = rowVal !== undefined ? rowVal.valid : new Date();
   const [file1, setFile1] = useState(null);
   const [file2, setFile2] = useState(null);
   const [file3, setFile3] = useState(null);
-  const [issuedDate, setIssueValue] = useState(null);
-  const [validDate, setValidValue] = useState(null);
+  const [issuedDate, setIssueValue] = useState(x);
+  const [validDate, setValidValue] = useState(y);
+  console.log(issuedDate);
   const mutation = useMutation({
     mutationFn: async (formData) => {
       var res = await Con.Add(formData);
@@ -96,7 +106,7 @@ const PermitForm = ({ open, columns, onClose, onSubmit, onRefetch, rowVal }) => 
   return (
     <Box sx={{ mt: 10, width: 500, flexGrow: 1 }}>
       <Dialog open={open} fullWidth={true} maxWidth='md'>
-        <DialogTitle textAlign='center'>Create New Business Permit</DialogTitle>
+        <DialogTitle textAlign='center'>{title} Business Permit</DialogTitle>
         <DialogContent>
           <form>
             <Grid container spacing={2} sx={{ mt: 5 }}>
@@ -109,13 +119,43 @@ const PermitForm = ({ open, columns, onClose, onSubmit, onRefetch, rowVal }) => 
                     mt: 1,
                   }}
                 >
-                  <TextField key={columns[0].accessorKey} label='Permit Num' name={columns[0].accessorKey} onChange={(e) => setValues({ ...values, [e.target.name]: e.target.value })} />
-                  <TextField key={columns[1].accessorKey} label='Business Name' name={columns[1].accessorKey} onChange={(e) => setValues({ ...values, [e.target.name]: e.target.value })} />
-                  <TextField key={columns[2].accessorKey} label='Nature of Business' name={columns[2].accessorKey} onChange={(e) => setValues({ ...values, [e.target.name]: e.target.value })} />
-                  <TextField key={columns[3].accessorKey} label='Location' name={columns[3].accessorKey} onChange={(e) => setValues({ ...values, [e.target.name]: e.target.value })} />
-                  <TextField key={columns[4].accessorKey} label='Proprietor' name={columns[4].accessorKey} onChange={(e) => setValues({ ...values, [e.target.name]: e.target.value })} />
+                  <TextField
+                    key={columns[0].accessorKey}
+                    defaultValue={rowVal !== undefined ? `${rowVal.permitNum}` : Date.now() + Math.random()}
+                    label='Permit Num'
+                    name={columns[0].accessorKey}
+                    onChange={(e) => setValues({ ...values, [e.target.name]: e.target.value })}
+                  />
+                  <TextField
+                    key={columns[1].accessorKey}
+                    defaultValue={rowVal !== undefined ? `${rowVal.businessName}` : ""}
+                    label='Business Name'
+                    name={columns[1].accessorKey}
+                    onChange={(e) => setValues({ ...values, [e.target.name]: e.target.value })}
+                  />
+                  <TextField
+                    key={columns[2].accessorKey}
+                    defaultValue={rowVal !== undefined ? `${rowVal.natureOfBusiness}` : ""}
+                    label='Nature of Business'
+                    name={columns[2].accessorKey}
+                    onChange={(e) => setValues({ ...values, [e.target.name]: e.target.value })}
+                  />
+                  <TextField
+                    key={columns[3].accessorKey}
+                    defaultValue={rowVal !== undefined ? `${rowVal.location}` : ""}
+                    label='Location'
+                    name={columns[3].accessorKey}
+                    onChange={(e) => setValues({ ...values, [e.target.name]: e.target.value })}
+                  />
+                  <TextField
+                    key={columns[4].accessorKey}
+                    defaultValue={rowVal !== undefined ? `${rowVal.proprietor}` : ""}
+                    name={columns[4].accessorKey}
+                    onChange={(e) => setValues({ ...values, [e.target.name]: e.target.value })}
+                  />
                   <TextField
                     key={columns[5].accessorKey}
+                    defaultValue={rowVal !== undefined ? `${rowVal.address}` : ""}
                     label='Address'
                     name={columns[5].accessorKey}
                     onChange={(e) => setValues({ ...values, [e.target.name]: e.target.value })}
@@ -139,7 +179,13 @@ const PermitForm = ({ open, columns, onClose, onSubmit, onRefetch, rowVal }) => 
                 >
                   <FormControl fullWidth>
                     <InputLabel id='demo-simple-select-label'>Status</InputLabel>
-                    <Select defaultValue='' key={columns[6].accessorKey} name={columns[6].accessorKey} label='Status' onChange={(e) => setValues({ ...values, [e.target.name]: e.target.value })}>
+                    <Select
+                      defaultValue={rowVal !== undefined ? `${rowVal.status}` : ""}
+                      key={columns[6].accessorKey}
+                      name={columns[6].accessorKey}
+                      label='Status'
+                      onChange={(e) => setValues({ ...values, [e.target.name]: e.target.value })}
+                    >
                       <MenuItem value='Operational'>Operational</MenuItem>
                       <MenuItem value='Closed'>Closed</MenuItem>
                       <MenuItem value='Expired'>Expired</MenuItem>
@@ -149,11 +195,11 @@ const PermitForm = ({ open, columns, onClose, onSubmit, onRefetch, rowVal }) => 
                   <LocalizationProvider dateAdapter={AdapterDayjs}>
                     <DatePicker
                       label='Date Issued'
-                      value={issuedDate}
                       name={columns[7].accessorKey}
                       onChange={(newValue) => {
                         setIssueValue(newValue);
                       }}
+                      value={issuedDate}
                       renderInput={(params) => <TextField {...params} />}
                     />
                     <DatePicker
@@ -166,11 +212,23 @@ const PermitForm = ({ open, columns, onClose, onSubmit, onRefetch, rowVal }) => 
                       renderInput={(params) => <TextField {...params} />}
                     />
                   </LocalizationProvider>
-                  <Input type='file'></Input>
+                  {/*  <Input type='file'></Input> */}
                   {/*   <TextField key={columns[7].accessorKey} label='Date Issued' name={columns[7].accessorKey} onChange={(e) => setValues({ ...values, [e.target.name]: e.target.value })} />
                   <TextField key={columns[8].accessorKey} label='Valid Until' name={columns[8].accessorKey} onChange={(e) => setValues({ ...values, [e.target.name]: e.target.value })} /> */}
-                  <TextField key={columns[9].accessorKey} label='Latitude' name={columns[9].accessorKey} onChange={(e) => setValues({ ...values, [e.target.name]: e.target.value })} />
-                  <TextField key={columns[10].accessorKey} label='Longitude' name={columns[10].accessorKey} onChange={(e) => setValues({ ...values, [e.target.name]: e.target.value })} />
+                  <TextField
+                    defaultValue={rowVal !== undefined ? `${rowVal.latitude}` : ""}
+                    key={columns[9].accessorKey}
+                    label='Latitude'
+                    name={columns[9].accessorKey}
+                    onChange={(e) => setValues({ ...values, [e.target.name]: e.target.value })}
+                  />
+                  <TextField
+                    defaultValue={rowVal !== undefined ? `${rowVal.longitude}` : ""}
+                    key={columns[10].accessorKey}
+                    label='Longitude'
+                    name={columns[10].accessorKey}
+                    onChange={(e) => setValues({ ...values, [e.target.name]: e.target.value })}
+                  />
                   <MuiFileInput key={columns[11].accessorKey} name={columns[11].accessorKey} value={file1} onChange={(e) => handleChange(columns[11].accessorKey, e)} />
                   <MuiFileInput key={columns[12].accessorKey} name={columns[12].accessorKey} value={file2} onChange={(e) => handleChange(columns[12].accessorKey, e)} />
                   <MuiFileInput key={columns[13].accessorKey} name={columns[13].accessorKey} value={file3} onChange={(e) => handleChange(columns[13].accessorKey, e)} />
