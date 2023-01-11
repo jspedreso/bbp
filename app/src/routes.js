@@ -1,18 +1,15 @@
 import Home from "./pages/Home";
-
 import Permit from "./pages/Permit";
 import Report from "./pages/Report";
 import Users from "./pages/User";
-
-import PermitLayout from "./components/permits/PermitLayout";
-import UserLayout from "./components/users/UserLayout";
+import Expiration from "./pages/Expire";
 
 const routes = [
   { path: "/", element: <Home /> },
-  { path: "/permit", element: <Permit />, children: [{ path: "form", element: <PermitLayout /> }] },
+  { path: "/permit", element: <Permit /> },
   { path: "/report", element: <Report /> },
   { path: "/user", element: <Users /> },
-  { path: "/permitForm", element: <PermitLayout /> },
-  { path: "/userForm", element: <UserLayout /> },
+  { path: "/nearExpiration", element: <Expiration /> },
 ];
+
 export default routes;

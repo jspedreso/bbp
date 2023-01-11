@@ -5,10 +5,17 @@ import { useMutation } from "@tanstack/react-query";
 import { Con } from "../../controller/User";
 import { toast } from "react-toastify";
 import { useForm, Controller } from "react-hook-form";
-
 const toasterCss = { position: "top-right", autoClose: 5000, hideProgressBar: false, closeOnClick: true, pauseOnHover: true, draggable: true, progress: undefined, theme: "colored" };
 
 const UserForm = ({ open, columns, onClose, onSubmit, onRefetch, rowVal, isEdit }) => {
+  const [values, setValues] = useState(() =>
+    columns.reduce((acc, column) => {
+      if (column.columnDefType !== "data") acc[column.accessorKey ?? ""] = "";
+      return acc;
+    }, {})
+  );
+
+  /*   const [values, setValues] = useState(); */
   var title = isEdit ? "Edit" : "Create New";
 
   const newVal = () => {
@@ -18,16 +25,11 @@ const UserForm = ({ open, columns, onClose, onSubmit, onRefetch, rowVal, isEdit 
     }, {});
   };
 
-  var defaultValues = rowVal !== undefined ? rowVal : newVal();
+  var defaultValuess = rowVal !== undefined ? rowVal : newVal();
+  console.log(defaultValuess);
 
-  const { handleSubmit, reset, setValue, control } = useForm({ defaultValues });
-
-  const onSubmitForm = (values) => {
-    mutation.mutate(values);
-  };
-
+  const { handleSubmit, reset, setValue, control } = useForm({ defaultValuess });
   const [isSubmitSuccessful, setSubmit] = useState(false);
-
   const mutation = useMutation({
     mutationFn: async (formData) => {
       var res;
@@ -50,13 +52,20 @@ const UserForm = ({ open, columns, onClose, onSubmit, onRefetch, rowVal, isEdit 
     },
   });
 
+  const onSubmitForm = (values) => {
+    mutation.mutate(values);
+  };
+
+  /* const handleSubmit = () => {
+    mutation.mutate(values);
+  }; */
   const closeForm = () => {
     reset({}, { keepDefaultValues: true });
     onClose();
   };
 
   return (
-    <Box sx={{ mt: 10, width: 400, flexGrow: 1 }}>
+    <Box sx={{ mt: 10, width: 500, flexGrow: 1 }}>
       <Dialog open={open}>
         <DialogTitle textAlign='center'>{title} Account</DialogTitle>
         <DialogContent>

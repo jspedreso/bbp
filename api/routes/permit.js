@@ -33,9 +33,11 @@ router.get("/", (req, res, next) => {
 
 router.put("/", (req, res, next) => {
   values = req.body;
+  /*   console.log(req); */
+  console.log(values);
+  /*   console.log(req.files); */
   let sql = "UPDATE permit SET ? WHERE ?";
   bbp.query(sql, [values, { permitNum: values.permitNum }], (err, result) => {
-    console.log(sql);
     if (err) {
       throw err;
     } else {
@@ -64,7 +66,7 @@ router.post("/", (req, res, next) => {
 
 router.delete("/:permitNum", (req, res, next) => {
   let sql = `DELETE FROM permit WHERE ?`;
-  /* console.log(values); */
+  console.log(req);
   bbp.query(sql, [req.params], (err, result) => {
     if (err) {
       res.send(err);

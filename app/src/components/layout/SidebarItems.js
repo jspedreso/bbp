@@ -2,6 +2,7 @@ import MailIcon from "@mui/icons-material/Mail";
 import PersonIcon from "@mui/icons-material/Person";
 import ReceiptIcon from "@mui/icons-material/Receipt";
 import AssessmentIcon from "@mui/icons-material/Assessment";
+import EmergencyShareIcon from "@mui/icons-material/EmergencyShare";
 
 const SidebarItems = [
   {
@@ -18,6 +19,11 @@ const SidebarItems = [
     title: "Permits",
     path: "/permit",
     icon: <ReceiptIcon />,
+  },
+  {
+    title: "Near Expiration",
+    path: "/nearExpiration",
+    icon: <EmergencyShareIcon />,
   },
   {
     title: "Reports",

@@ -7,29 +7,15 @@ import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import Grid from "@mui/material/Grid";
 import { useMutation } from "@tanstack/react-query";
-import { Con } from "../../controller/Permit";
+/* import { Con } from "../../controller/Expire"; */
 import Divider from "@mui/material/Divider";
 /* import { MuiFileInput } from "mui-file-input"; */
 import FormControl from "@mui/material/FormControl";
 import { useForm, Controller } from "react-hook-form";
 
-/* import { GoogleMap, useJsApiLoader } from "@react-google-maps/api";
- */
-/* const containerStyle = {
-  width: "400px",
-  height: "400px",
-};
-
-const center = {
-  lat: -3.745,
-  lng: -38.523,
-};
-
-
- */
 const toasterCss = { position: "top-right", autoClose: 5000, hideProgressBar: false, closeOnClick: true, pauseOnHover: true, draggable: true, progress: undefined, theme: "colored" };
 
-const PermitForm = ({ open, columns, onClose, onSubmit, onRefetch, rowVal, isEdit }) => {
+const ExpireForm = ({ open, columns, onClose, onSubmit, onRefetch, rowVal, isEdit }) => {
   /*  console.log(rowVal !== undefined ? rowVal : "No Value"); */
   const [values, setValues] = useState(() =>
     columns.reduce((acc, column) => {
@@ -67,18 +53,15 @@ const PermitForm = ({ open, columns, onClose, onSubmit, onRefetch, rowVal, isEdi
   const mutation = useMutation({
     mutationFn: async (formData) => {
       var res;
-      if (!isEdit) {
+      /* if (!isEdit) {
         res = await Con.Add(formData);
         if (res.data.affectedRows > 0) {
           var upFile = await Con.UploadAdd(formData);
         }
       } else {
-        /*   let fd = new FormData();
-        fd.append("attachment1", formData.attachment1);
-        console.log(fd); */
-
+        console.log(formData);
         res = await Con.Update(formData);
-      }
+      } */
       return res;
     },
     onSuccess: (data, variables, context) => {
@@ -130,7 +113,7 @@ const PermitForm = ({ open, columns, onClose, onSubmit, onRefetch, rowVal, isEdi
   return (
     <Box sx={{ mt: 10, width: 500, flexGrow: 1 }}>
       <Dialog open={open} fullWidth={true} maxWidth='md'>
-        <DialogTitle textAlign='center'>{title} Business Permit</DialogTitle>
+        <DialogTitle textAlign='center'>{title} Business Expire</DialogTitle>
 
         <DialogContent>
           <form>
@@ -144,7 +127,7 @@ const PermitForm = ({ open, columns, onClose, onSubmit, onRefetch, rowVal, isEdi
                     mt: 1,
                   }}
                 >
-                  <Controller render={({ field }) => <TextField {...field} label='Permit Num' />} name={columns[0].accessorKey} control={control} />
+                  <Controller render={({ field }) => <TextField {...field} label='Expire Num' />} name={columns[0].accessorKey} control={control} />
                   <Controller render={({ field }) => <TextField {...field} label='Business Name' />} name={columns[1].accessorKey} control={control} />
                   <Controller render={({ field }) => <TextField {...field} label='Nature of Business' />} name={columns[2].accessorKey} control={control} />
                   <Controller render={({ field }) => <TextField {...field} label='Location' />} name={columns[3].accessorKey} control={control} />
@@ -290,4 +273,4 @@ const PermitForm = ({ open, columns, onClose, onSubmit, onRefetch, rowVal, isEdi
     </Box>
   );
 };
-export default PermitForm;
+export default ExpireForm;
