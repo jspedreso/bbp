@@ -7,7 +7,7 @@ import { Delete, Edit } from "@mui/icons-material";
 import UserForm from "./UserForm";
 import { Con } from "../../controller/User";
 
-const PermitList = () => {
+const UserList = () => {
   /*  const toasterCss = { position: "top-right", autoClose: 5000, hideProgressBar: false, closeOnClick: true, pauseOnHover: true, draggable: true, progress: undefined, theme: "colored" }; */
   const [createModalOpen, setCreateModalOpen] = useState(false);
   const [columnFilters, setColumnFilters] = useState([]);
@@ -38,13 +38,13 @@ const PermitList = () => {
   };
 
   const handleSaveRowEdits = async ({ exitEditingMode, row, values }) => {
-    Con.Update(values);
-    tableData[row.index] = values;
+    /*  Con.Update(values);
+    tableData[row.index] = values; */
     //send/receive api updates here, then refetch or update local table data for re-render
-    onRefetch();
-    setTableData([...tableData]);
-
-    exitEditingMode(); //required to exit editing mode and close modal
+    /* onRefetch();
+    setTableData([...tableData]); */
+    /* exitEditingMode(); */
+    //required to exit editing mode and close modal
   };
 
   const handleDeleteRow = useCallback(
@@ -63,6 +63,18 @@ const PermitList = () => {
   );
 
   const openEdit = (row, table, mode) => {
+    /*   var currentRow = [];
+    for (const [key, value] of Object.entries(row.original)) {
+      if (key !== "password") {
+        if (value != null) {
+          currentRow[key] = value;
+        }
+      }
+    }
+
+    const result = Object.fromEntries(Object.entries(currentRow));
+    row["original"] = result;
+    console.log(row.original); */
     setRowVal(row.original);
     setEdit(true);
     setCreateModalOpen(true);
@@ -127,14 +139,14 @@ const PermitList = () => {
             : undefined
         }
         onColumnFiltersChange={setColumnFilters}
-        onEditingRowSave={handleSaveRowEdits}
+        /*    onEditingRowSave={handleSaveRowEdits} */
         /* onGlobalFilterChange={setGlobalFilter} */
         onPaginationChange={setPagination}
         onSortingChange={setSorting}
         renderTopToolbarCustomActions={() => (
           <Box>
             <Tooltip arrow title='Refresh Data'>
-              <IconButton onClick={() => refetch()}>
+              <IconButton onClick={() => {}}>
                 <RefreshIcon />
               </IconButton>
             </Tooltip>
@@ -168,10 +180,11 @@ const PermitList = () => {
           showGlobalFilter: false,
         }}
       />
-
-      <UserForm columns={columns} open={createModalOpen} onClose={() => setCreateModalOpen(false)} onSubmit={handleCreateNewRow} onRefetch={refetch} rowVal={rowVal} isEdit={isEdit} />
+      {createModalOpen && (
+        <UserForm columns={columns} open={createModalOpen} onClose={() => setCreateModalOpen(false)} onSubmit={handleCreateNewRow} onRefetch={() => {}} rowVal={rowVal} isEdit={isEdit} />
+      )}
     </Box>
   );
 };
 
-export default PermitList;
+export default UserList;

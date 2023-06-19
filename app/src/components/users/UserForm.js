@@ -1,6 +1,6 @@
 /* eslint-disable no-lone-blocks */
 import React, { useState } from "react";
-import { Button, Dialog, Box, DialogActions, DialogContent, DialogTitle, Stack, TextField, Grid } from "@mui/material";
+import { Button, Select, MenuItem, Dialog, Box, DialogActions, DialogContent, DialogTitle, Stack, TextField, Grid } from "@mui/material";
 import { useMutation } from "@tanstack/react-query";
 import { Con } from "../../controller/User";
 import { toast } from "react-toastify";
@@ -10,7 +10,12 @@ const toasterCss = { position: "top-right", autoClose: 5000, hideProgressBar: fa
 
 const UserForm = ({ open, columns, onClose, onSubmit, onRefetch, rowVal, isEdit }) => {
   var title = isEdit ? "Edit" : "Create New";
-
+  const [values, setValues] = useState(() =>
+    columns.reduce((acc, column) => {
+      if (column.columnDefType !== "data") acc[column.accessorKey ?? ""] = "";
+      return acc;
+    }, {})
+  );
   const newVal = () => {
     return columns.reduce((acc, column) => {
       acc[column.accessorKey] = "";
@@ -19,8 +24,9 @@ const UserForm = ({ open, columns, onClose, onSubmit, onRefetch, rowVal, isEdit 
   };
 
   var defaultValues = rowVal !== undefined ? rowVal : newVal();
+  console.log(defaultValues);
 
-  const { handleSubmit, reset, setValue, control } = useForm({ defaultValues });
+  const { handleSubmit, reset, setValue, getValues, control } = useForm({ defaultValues });
 
   const onSubmitForm = (values) => {
     mutation.mutate(values);
@@ -69,12 +75,30 @@ const UserForm = ({ open, columns, onClose, onSubmit, onRefetch, rowVal, isEdit 
                   gap: "1.5rem",
                 }}
               >
-                <Controller render={({ field }) => <TextField {...field} label='UserId' />} name={columns[0].accessorKey} control={control} />
-                <Controller render={({ field }) => <TextField {...field} label='Firstname' />} name={columns[1].accessorKey} control={control} />
-                <Controller render={({ field }) => <TextField {...field} label='Middlename' />} name={columns[2].accessorKey} control={control} />
-                <Controller render={({ field }) => <TextField {...field} label='Lastname' />} name={columns[3].accessorKey} control={control} />
-                <Controller render={({ field }) => <TextField {...field} label='User Type' />} name={columns[4].accessorKey} control={control} />
-                <Controller render={({ field }) => <TextField {...field} label='Username' />} name={columns[5].accessorKey} control={control} />
+                <Controller render={({ field }) => <TextField {...field} label='UserId' />} name='userId' control={control} />
+                <Controller render={({ field }) => <TextField {...field} label='Firstname' />} name='firstName' control={control} />
+                <Controller render={({ field }) => <TextField {...field} label='Middlename' />} name='middleName' control={control} />
+                <Controller render={({ field }) => <TextField {...field} label='Lastname' />} name='lastName' control={control} />
+                <Controller
+                  render={({ field }) => (
+                    <Select
+                      value={isEdit ? rowVal.accountType : "Encoder"}
+                      defaultValue={isEdit ? rowVal.accountType : "Encoder"}
+                      key={columns[3].accessorKey}
+                      name='accountType'
+                      label='Account Type'
+                      onChange={(e) => setValues({ ...values, [e.target.name]: e.target.value })}
+                    >
+                      <MenuItem value='Admin'>Admin</MenuItem>
+                      <MenuItem value='Encoder'>Encoder</MenuItem>
+                    </Select>
+                  )}
+                  name='userType'
+                  control={control}
+                />
+                <Controller render={({ field }) => <TextField {...field} label='Username' />} name='username' control={control} />
+                <Controller render={({ field }) => <TextField {...field} label='Password' type='password' />} name='password' control={control} />
+                {/*  <Controller render={({ field }) => <TextField {...field} label='Pasword' />} name={columns[6].accessorKey} control={control} /> */}
                 {/*  <Controller render={({ field }) => <TextField {...field} label='Password' />} name='password' control={control} /> */}
                 {/* {columns.map((column) => (
                 <TextField key={column.accessorKey} label={column.header} name={column.accessorKey} />

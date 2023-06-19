@@ -7,7 +7,7 @@ import ExpireList from "../components/expiration/ExpireList";
 const queryClient = new QueryClient();
 
 const Expire = () => (
-  <QueryClientProvider client={queryClient} contextSharing={true}>
+  <QueryClientProvider client={queryClient}>
     <ExpireList />
   </QueryClientProvider>
 );

@@ -1,9 +1,9 @@
 import { useCallback, useMemo, useState } from "react";
 import MaterialReactTable from "material-react-table";
-import { Box, Tooltip, Button, IconButton } from "@mui/material";
+import { Box, Tooltip, Button, IconButton, tableCellClasses } from "@mui/material";
 import RefreshIcon from "@mui/icons-material/Refresh";
 import { toast } from "react-toastify";
-
+import { CSVLink, CSVDownload } from "react-csv";
 import { Delete, Edit } from "@mui/icons-material";
 import PermitForm from "./PermitForm";
 import { Con } from "../../controller/Permit";
@@ -145,7 +145,6 @@ const PermitList = () => {
   const openEdit = (row, table, mode) => {
     var currentRow = [];
     let dateIssued = moment();
-
     for (const [key, value] of Object.entries(row.original)) {
       if (value != null) {
         /*   let x = moment(value); */
@@ -167,10 +166,31 @@ const PermitList = () => {
     /*  table.setEditingRow(row); */
   };
 
-  const openAdd = () => {
+  const openAdd = (table) => {
+    /*    console.log(table.table.getAllColumns()); */
+    /*     var currentRow = [];
+    let dateIssued = moment();
+    console.log(first);
+    for (const [key, value] of Object.entries(row.original)) {
+      if (value != null) {
+     
+        currentRow[key] = "";
+      } else {
+        currentRow[key] = key === "valid" || key === "issued" ? dateIssued.format("MMMM DD, YYYY") : "";
+      }
+    }
+
+    const result = Object.fromEntries(Object.entries(currentRow));
+    row["original"] = result;
+    row["_valuesCache"] = result;
+    setRowVal(row.original); */
     setRowVal({});
     setEdit(false);
     setCreateModalOpen(true);
+  };
+
+  const handleExport = (tableData) => {
+    <CSVLink data={tableData} />;
   };
 
   return (
@@ -199,16 +219,26 @@ const PermitList = () => {
         /* onGlobalFilterChange={setGlobalFilter} */
         onPaginationChange={setPagination}
         onSortingChange={setSorting}
-        renderTopToolbarCustomActions={() => (
+        renderTopToolbarCustomActions={(table) => (
           <Box>
             <Tooltip arrow title='Refresh Data'>
               <IconButton onClick={() => refetch()}>
                 <RefreshIcon />
               </IconButton>
             </Tooltip>
-            <Button color='secondary' onClick={openAdd} variant='contained'>
+            <Button color='secondary' onClick={(e) => openAdd(table)} variant='contained'>
               New Permit
             </Button>
+            <CSVLink data={data?.data ?? []} style={{ textDecoration: "none" }}>
+              <Button sx={{ ml: 3 }} color='secondary' variant='contained' onClick={() => handleExport(data?.data ?? [])}>
+                Export to CSV
+              </Button>
+            </CSVLink>
+            {/*     <CSVLink data={{ asd: "asdadasd" }} onClick={handleExport}>
+              <Button sx={{ ml: 3 }} color='secondary' variant='contained'>
+                Export to CSV
+              </Button>
+            </CSVLink> */}
           </Box>
         )}
         renderRowActions={({ cell, row, table }) => (

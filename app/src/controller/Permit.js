@@ -27,6 +27,7 @@ const Permit = {
     return res;
   },
   Update: (formData) => {
+    console.log(formData);
     const res = axios
       .put(`${baseURL}/permit`, formData)
       .then((response) => {

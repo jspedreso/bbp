@@ -4,6 +4,7 @@ import { Button, Dialog, Box, DialogActions, DialogContent, DialogTitle, Stack, 
 import { toast } from "react-toastify";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { DesktopDatePicker } from "@mui/x-date-pickers/DesktopDatePicker";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import Grid from "@mui/material/Grid";
 import { useMutation } from "@tanstack/react-query";
@@ -31,13 +32,13 @@ const toasterCss = { position: "top-right", autoClose: 5000, hideProgressBar: fa
 
 const PermitForm = ({ open, columns, onClose, onSubmit, onRefetch, rowVal, isEdit }) => {
   /*  console.log(rowVal !== undefined ? rowVal : "No Value"); */
-  const [values, setValues] = useState(() =>
-    columns.reduce((acc, column) => {
+  const [values, setValues] = useState(
+    () => {}
+    /*   columns.reduce((acc, column) => {
       if (column.columnDefType !== "data") acc[column.accessorKey ?? ""] = "";
       return acc;
-    }, {})
+    }, {}) */
   );
-
   /*   const [values, setValues] = useState(); */
   var title = isEdit ? "Edit" : "Create New";
   var x = isEdit ? rowVal.issued : new Date();
@@ -46,12 +47,12 @@ const PermitForm = ({ open, columns, onClose, onSubmit, onRefetch, rowVal, isEdi
   const newVal = () => {
     return columns.reduce((acc, column) => {
       acc[column.accessorKey] = "";
+
       return acc;
     }, {});
   };
-
-  var defaultValues = rowVal !== undefined ? rowVal : newVal();
-
+  var defaultValues = Object.keys(rowVal).length > 0 ? rowVal : newVal();
+  /* console.log(defaultValues.length); */
   const { handleSubmit, reset, setValue, getValues, control } = useForm({ defaultValues });
 
   const onSubmitForm = (values) => {
@@ -62,6 +63,7 @@ const PermitForm = ({ open, columns, onClose, onSubmit, onRefetch, rowVal, isEdi
   const [file1, setFile1] = useState(null);
   const [file2, setFile2] = useState(null);
   const [file3, setFile3] = useState(null);
+  const [status, setStatus] = useState();
   const [issuedDate, setIssueValue] = useState(x);
   const [validDate, setValidValue] = useState(y);
   const mutation = useMutation({
@@ -70,7 +72,7 @@ const PermitForm = ({ open, columns, onClose, onSubmit, onRefetch, rowVal, isEdi
       if (!isEdit) {
         res = await Con.Add(formData);
         if (res.data.affectedRows > 0) {
-          var upFile = await Con.UploadAdd(formData);
+          /*   var upFile = await Con.UploadAdd(formData); */
         }
       } else {
         /*   let fd = new FormData();
@@ -94,11 +96,17 @@ const PermitForm = ({ open, columns, onClose, onSubmit, onRefetch, rowVal, isEdi
   });
 
   const closeForm = () => {
-    reset({}, { keepDefaultValues: true });
+    reset({}, { keepDefaultValues: false });
     onClose();
   };
 
+  const handleStatusChange = (e) => {
+    console.log(e.target.value);
+    setStatus(e.target.value);
+  };
+
   const handleChange = (key, e) => {
+    console.log(key);
     switch (key) {
       case "attachment1":
         setFile1(e);
@@ -110,7 +118,9 @@ const PermitForm = ({ open, columns, onClose, onSubmit, onRefetch, rowVal, isEdi
         setFile3(e);
         /*   setFile3(e); */
         break;
+
       default:
+        setValue(key);
         break;
     }
   };
@@ -173,7 +183,17 @@ const PermitForm = ({ open, columns, onClose, onSubmit, onRefetch, rowVal, isEdi
                     name={columns[0].accessorKey}
                     control={control}
                   /> */}
+
                   <FormControl fullWidth>
+                    <InputLabel id='statusLabel'>Status</InputLabel>
+                    <Select defaultValue={isEdit ? rowVal.status : "Operational"} key={columns[6].accessorKey} name='status' label='Status' onChange={handleStatusChange}>
+                      <MenuItem value='Operational'>Operational</MenuItem>
+                      <MenuItem value='Closed'>Closed</MenuItem>
+                      <MenuItem value='Expired'>Expired</MenuItem>
+                    </Select>
+                  </FormControl>
+
+                  {/*  <FormControl fullWidth>
                     <InputLabel id='demo-simple-select-label'>Status</InputLabel>
                     <Select
                       value={isEdit ? rowVal.status : "Operational"}
@@ -181,32 +201,26 @@ const PermitForm = ({ open, columns, onClose, onSubmit, onRefetch, rowVal, isEdi
                       key={columns[6].accessorKey}
                       name={columns[6].accessorKey}
                       label='Status'
-                      onChange={(e) => setValues({ ...values, [e.target.name]: e.target.value })}
+                      onChange={handleChange}
                     >
                       <MenuItem value='Operational'>Operational</MenuItem>
                       <MenuItem value='Closed'>Closed</MenuItem>
                       <MenuItem value='Expired'>Expired</MenuItem>
                     </Select>
-                  </FormControl>
+                  </FormControl> */}
                   <LocalizationProvider dateAdapter={AdapterDayjs}>
-                    <DatePicker
+                    <DesktopDatePicker label='Date Issued' inputFormat='MM/DD/YYYY' name={columns[7].accessorKey} onChange={handleChange} renderInput={(params) => <TextField {...params} />} />
+                    <DesktopDatePicker label='Date Valid' inputFormat='MM/DD/YYYY' name={columns[8].accessorKey} onChange={handleChange} renderInput={(params) => <TextField {...params} />} />
+                    {/*  <DatePicker
                       label='Date Issued'
                       name={columns[7].accessorKey}
                       onChange={(newValue) => {
                         setIssueValue(newValue);
                       }}
                       value={issuedDate}
-                      renderInput={(params) => <TextField {...params} />}
-                    />
-                    <DatePicker
-                      label='Date Valid'
-                      value={validDate}
-                      name={columns[8].accessorKey}
-                      onChange={(newValue) => {
-                        setValidValue(newValue);
-                      }}
-                      renderInput={(params) => <TextField {...params} />}
-                    />
+                      renderInput={(params) => <TextField {...params} onChange={(e) => setValues({ ...values, [e.target.name]: e.target.value })} />}
+                    /> */}
+                    {/*   <DatePicker label='Date Valid' value={validDate} name={columns[8].accessorKey} onChange={handleChange} renderInput={(params) => <TextField {...params} />} /> */}
                   </LocalizationProvider>
 
                   <Controller render={({ field }) => <TextField {...field} label='longitude' />} name={columns[9].accessorKey} control={control} />

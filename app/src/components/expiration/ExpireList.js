@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 import MaterialReactTable from "material-react-table";
-import { Box, Tooltip, IconButton, Typography } from "@mui/material";
+import { Box, Tooltip, IconButton, Typography, createTheme, ThemeProvider } from "@mui/material";
 import RefreshIcon from "@mui/icons-material/Refresh";
 
 import ExpireForm from "./ExpireForm";
@@ -36,69 +36,108 @@ const ExpireList = () => {
     setTableData([...tableData]);
   };
 
+  const cellDisplay = (cell, row) => {
+    return (
+      <Box
+        sx={{
+          display: "flex",
+          alignItems: "center",
+          gap: "1rem",
+        }}
+      >
+        <Typography sx={{ color: setCellColor(row) }}>{cell.getValue()}</Typography>
+      </Box>
+    );
+  };
+
+  const TEST = (isDetailPanel, row, table) => {
+    console.log(isDetailPanel);
+  };
+
+  const setCellColor = (rowValue) => {
+    var remainingDays = rowValue.original.remainingDays;
+    var color = "#000000";
+    if (remainingDays > 30 && remainingDays < 60) {
+      color = "##ff6666"; //orange
+    } else if (remainingDays > 0 && remainingDays < 30) {
+      color = "#CC5500";
+    } else if (remainingDays > 60 && remainingDays <= 90) {
+      color = "#f1c232"; //yellow
+    } else if (remainingDays > 90) {
+      color = "#274e13";
+    } else if (remainingDays < 0) {
+      color = "#cc0000";
+    }
+
+    return color;
+  };
+  const ccc = {
+    /*  style: { ".MuiTableRow-root": "#000000" }, */
+  };
+
   const columns = useMemo(
     () => [
       {
         accessorKey: "permitNum",
         header: "Permit Num",
         enableEditing: false,
+        Cell: ({ cell, row }) => cellDisplay(cell, row),
       },
-      {
+      /*  {
         accessorKey: "businessName",
         header: "Business Name",
-      },
+        Cell: ({ cell, row }) => cellDisplay(cell, row),
+      }, */
       {
         accessorKey: "natureOfBusiness",
         header: "Nature of Business",
+        Cell: ({ cell, row }) => cellDisplay(cell, row),
       },
-      {
+      /* {
         accessorKey: "location",
         header: "Location",
-      },
+        Cell: ({ cell, row }) => cellDisplay(cell, row),
+      }, */
       {
         accessorKey: "proprietor",
         header: "Proprietor",
+        Cell: ({ cell, row }) => cellDisplay(cell, row),
       },
       {
         accessorKey: "address",
         header: "Address",
+        Cell: ({ cell, row }) => cellDisplay(cell, row),
       },
       {
         accessorKey: "status",
         header: "Status",
+        Cell: ({ cell, row }) => cellDisplay(cell, row),
       },
       {
         accessorKey: "issued",
         header: "Date Issued",
+        Cell: ({ cell, row }) => cellDisplay(cell, row),
       },
       {
         accessorKey: "valid",
         header: "Valid Until",
+        Cell: ({ cell, row }) => cellDisplay(cell, row),
       },
       {
         accessorKey: "latitude",
         header: "Lat",
+        Cell: ({ cell, row }) => cellDisplay(cell, row),
       },
       {
         accessorKey: "longitude",
         header: "Long",
+        Cell: ({ cell, row }) => cellDisplay(cell, row),
       },
       {
         accessorKey: "remainingDays",
         header: "Days Remaining",
         columnDefType: "file",
-        Cell: ({ cell, row }) => (
-          <Box
-            sx={{
-              display: "flex",
-              alignItems: "center",
-              gap: "1rem",
-            }}
-          >
-            <img alt='avatar' height={30} src={row.original.avatar} loading='lazy' style={{ borderRadius: "50%" }} />
-            <Typography sx={{ color: green }}>{cell.getValue()}</Typography>
-          </Box>
-        ),
+        Cell: ({ cell, row }) => cellDisplay(cell, row),
       },
       /*       {
         accessorKey: "attachment2",
@@ -114,21 +153,21 @@ const ExpireList = () => {
     []
   );
 
-  const test = {
-    style: { "background-color": "#0000" },
-  };
-
-  const getColor = () => {};
-
-  const checkRemaining = (row) => {
-    var sx;
-    if (row.getValue("remainingDays") > 60) {
-    }
-    return sx;
-  };
-
+  const tableTheme = () =>
+    createTheme({
+      components: {
+        muiTableBodyProps: {
+          muiTableRow: {
+            root: {
+              background: "#000",
+            },
+          },
+        },
+      },
+    });
   return (
-    <Box sx={{ ml: 30 }}>
+    <Box component='main' sx={{ ml: 30 }}>
+      {/*   <ThemeProvider theme={tableTheme}> */}
       <MaterialReactTable
         columns={columns}
         /*  data={data?.data ?? []} */ //data is undefined on first render
@@ -172,11 +211,15 @@ const ExpireList = () => {
           sorting,
           showGlobalFilter: false,
         }}
-        muiTableBodyRowProps={({ isDetailPanel, row, table }) => {
-          checkRemaining(row);
-        }}
+        renderDetailPanel={({ row }) => (
+          <div>
+            <span>First Name: {row.original.businessName}</span>
+            <span>Last Name: {row.original.location}</span>
+          </div>
+        )}
+        muiTableBodyProps={ccc}
       />
-
+      {/* </ThemeProvider> */}
       {createModalOpen && (
         <ExpireForm columns={columns} open={createModalOpen} onClose={() => setCreateModalOpen(false)} onSubmit={handleCreateNewRow} onRefetch={refetch} rowVal={rowVal} isEdit={isEdit} />
       )}

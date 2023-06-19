@@ -23,7 +23,7 @@ router.get("/", (req, res, next) => {
     }
   }
 
-  var sql = `SELECT * FROM bbp.user ${where} LIMIT ${pageIndex},${pageSize}`;
+  var sql = `SELECT userId,firstName,middleName,lastName,accountType,username,password FROM bbp.user ${where} LIMIT ${pageIndex},${pageSize}`;
 
   bbp.query(sql, (err, results, fields) => {
     res.send(results);
