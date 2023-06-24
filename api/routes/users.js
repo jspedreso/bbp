@@ -23,7 +23,7 @@ router.get("/", (req, res, next) => {
     }
   }
 
-  var sql = `SELECT * FROM bbp.user ${where} LIMIT ${pageIndex},${pageSize}`;
+  var sql = `SELECT userId,firstName,middleName,lastName,accountType,username,password FROM bbp.user ${where} LIMIT ${pageIndex},${pageSize}`;
 
   bbp.query(sql, (err, results, fields) => {
     res.send(results);
@@ -54,6 +54,7 @@ router.post("/", (req, res, next) => {
   let sql = `INSERT INTO ${db}.user (${fldStr.slice(0, -1)}) VALUES(?,?,?,?,?,?,?)`;
 
   bbp.query(sql, fldVal, (err, result) => {
+    console.log(result);
     if (err) {
       throw err;
     } else {

@@ -2,12 +2,13 @@ import { useCallback, useMemo, useState } from "react";
 import MaterialReactTable from "material-react-table";
 import { Box, Tooltip, Button, IconButton } from "@mui/material";
 import RefreshIcon from "@mui/icons-material/Refresh";
-
+/* import { toast } from "react-toastify"; */
 import { Delete, Edit } from "@mui/icons-material";
 import UserForm from "./UserForm";
 import { Con } from "../../controller/User";
 
-const PermitList = () => {
+const UserList = () => {
+  /*  const toasterCss = { position: "top-right", autoClose: 5000, hideProgressBar: false, closeOnClick: true, pauseOnHover: true, draggable: true, progress: undefined, theme: "colored" }; */
   const [createModalOpen, setCreateModalOpen] = useState(false);
   const [columnFilters, setColumnFilters] = useState([]);
   /*   const [globalFilter, setGlobalFilter] = useState(""); */
@@ -16,7 +17,8 @@ const PermitList = () => {
     pageIndex: 0,
     pageSize: 5,
   });
-
+  const [isEdit, setEdit] = useState(false);
+  const [rowVal, setRowVal] = useState();
   const { data, isError, isFetching, isLoading, refetch } = Con.Get({
     tableData: "table-data",
     colFilters: columnFilters,
@@ -36,13 +38,13 @@ const PermitList = () => {
   };
 
   const handleSaveRowEdits = async ({ exitEditingMode, row, values }) => {
-    Con.Update(values);
-    tableData[row.index] = values;
+    /*  Con.Update(values);
+    tableData[row.index] = values; */
     //send/receive api updates here, then refetch or update local table data for re-render
-    onRefetch();
-    setTableData([...tableData]);
-
-    exitEditingMode(); //required to exit editing mode and close modal
+    /* onRefetch();
+    setTableData([...tableData]); */
+    /* exitEditingMode(); */
+    //required to exit editing mode and close modal
   };
 
   const handleDeleteRow = useCallback(
@@ -59,6 +61,31 @@ const PermitList = () => {
     },
     [tableData]
   );
+
+  const openEdit = (row, table, mode) => {
+    /*   var currentRow = [];
+    for (const [key, value] of Object.entries(row.original)) {
+      if (key !== "password") {
+        if (value != null) {
+          currentRow[key] = value;
+        }
+      }
+    }
+
+    const result = Object.fromEntries(Object.entries(currentRow));
+    row["original"] = result;
+    console.log(row.original); */
+    setRowVal(row.original);
+    setEdit(true);
+    setCreateModalOpen(true);
+  };
+
+  const openAdd = () => {
+    setRowVal({});
+    setEdit(false);
+    setCreateModalOpen(true);
+  };
+
   const columns = useMemo(
     () => [
       {
@@ -86,10 +113,6 @@ const PermitList = () => {
         accessorKey: "username",
         header: "Username",
       },
-      {
-        accessorKey: "password",
-        header: "Password",
-      },
     ],
     []
   );
@@ -116,18 +139,18 @@ const PermitList = () => {
             : undefined
         }
         onColumnFiltersChange={setColumnFilters}
-        onEditingRowSave={handleSaveRowEdits}
+        /*    onEditingRowSave={handleSaveRowEdits} */
         /* onGlobalFilterChange={setGlobalFilter} */
         onPaginationChange={setPagination}
         onSortingChange={setSorting}
         renderTopToolbarCustomActions={() => (
           <Box>
             <Tooltip arrow title='Refresh Data'>
-              <IconButton onClick={() => refetch()}>
+              <IconButton onClick={() => {}}>
                 <RefreshIcon />
               </IconButton>
             </Tooltip>
-            <Button color='secondary' onClick={() => setCreateModalOpen(true)} variant='contained'>
+            <Button color='secondary' onClick={openAdd} variant='contained'>
               Create New Account
             </Button>
           </Box>
@@ -135,7 +158,7 @@ const PermitList = () => {
         renderRowActions={({ row, table }) => (
           <Box sx={{ display: "flex", gap: "1rem" }}>
             <Tooltip arrow placement='left' title='Edit'>
-              <IconButton onClick={() => table.setEditingRow(row)}>
+              <IconButton onClick={() => openEdit(row, table)}>
                 <Edit />
               </IconButton>
             </Tooltip>
@@ -157,10 +180,19 @@ const PermitList = () => {
           showGlobalFilter: false,
         }}
       />
-
-      <UserForm columns={columns} open={createModalOpen} onClose={() => setCreateModalOpen(false)} onSubmit={handleCreateNewRow} onRefetch={refetch} />
+      {createModalOpen && (
+        <UserForm
+          columns={columns}
+          open={createModalOpen}
+          onClose={() => setCreateModalOpen(false)}
+          onSubmit={handleCreateNewRow}
+          onRefetch={() => {}}
+          rowVal={rowVal}
+          isEdit={isEdit}
+        />
+      )}
     </Box>
   );
 };
 
-export default PermitList;
+export default UserList;

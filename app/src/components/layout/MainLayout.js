@@ -1,6 +1,5 @@
 import * as React from "react";
 import Box from "@mui/material/Box";
-import CssBaseline from "@mui/material/CssBaseline";
 import Header from "./Header";
 import SideBarLayout from "./SidebarLayout";
 import { Outlet } from "react-router-dom";
@@ -8,7 +7,6 @@ import { Outlet } from "react-router-dom";
 const MainLayout = () => {
   return (
     <Box sx={{ display: "flex" }}>
-      <CssBaseline />
       <Header></Header>
       <SideBarLayout></SideBarLayout>
       <Outlet></Outlet>

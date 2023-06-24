@@ -1,6 +1,7 @@
 const express = require("express");
 const app = express();
 const router = express.Router();
+
 const bbp = require("../dbconnect");
 const db = "bbp";
 router.param("permitNum", (req, res, next, id) => {
@@ -32,6 +33,9 @@ router.get("/", (req, res, next) => {
 
 router.put("/", (req, res, next) => {
   values = req.body;
+  /*   console.log(req); */
+  console.log(values);
+  /*   console.log(req.files); */
   let sql = "UPDATE permit SET ? WHERE ?";
   bbp.query(sql, [values, { permitNum: values.permitNum }], (err, result) => {
     if (err) {
@@ -44,17 +48,16 @@ router.put("/", (req, res, next) => {
 
 router.post("/", (req, res, next) => {
   var fldStr = "";
-  var fldVal = [];
+  var fldVal = "";
   for (const [key, value] of Object.entries(req.body)) {
     fldStr += `${key},`;
-    fldVal.push(value);
+    fldVal += value === "" ? "''," : `'${value}',`;
   }
 
-  let sql = `INSERT INTO ${db}.permit (${fldStr.slice(0, -1)}) VALUES(?,?,?,?,?,?,?,?)`;
-
+  let sql = `INSERT INTO ${db}.permit (${fldStr.slice(0, -1)}) VALUES(${fldVal.slice(0, -1)})`;
   bbp.query(sql, fldVal, (err, result) => {
     if (err) {
-      throw err;
+      res.send(err);
     } else {
       res.send(result);
     }
@@ -63,10 +66,10 @@ router.post("/", (req, res, next) => {
 
 router.delete("/:permitNum", (req, res, next) => {
   let sql = `DELETE FROM permit WHERE ?`;
-  /* console.log(values); */
+  console.log(req);
   bbp.query(sql, [req.params], (err, result) => {
     if (err) {
-      throw err;
+      res.send(err);
     } else {
       console.log(sql);
       res.send(result);

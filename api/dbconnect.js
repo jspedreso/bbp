@@ -4,6 +4,7 @@ const connection = mysql.createConnection({
   user: "root",
   password: "root",
   database: "bbp",
+  dateStrings: true,
 });
 
 connection.connect((err) => {

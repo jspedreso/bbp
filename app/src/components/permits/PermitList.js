@@ -1,11 +1,24 @@
 import { useCallback, useMemo, useState } from "react";
 import MaterialReactTable from "material-react-table";
-import { Box, Tooltip, Button, IconButton } from "@mui/material";
+import { Box, Tooltip, Button, IconButton, tableCellClasses } from "@mui/material";
 import RefreshIcon from "@mui/icons-material/Refresh";
-import Moment from "react-moment";
+import { toast } from "react-toastify";
+import { CSVLink, CSVDownload } from "react-csv";
 import { Delete, Edit } from "@mui/icons-material";
 import PermitForm from "./PermitForm";
 import { Con } from "../../controller/Permit";
+/* import { resolveTo } from "@remix-run/router"; */
+
+const toasterCss = {
+  position: "top-right",
+  autoClose: 5000,
+  hideProgressBar: false,
+  closeOnClick: true,
+  pauseOnHover: true,
+  draggable: true,
+  progress: undefined,
+  theme: "colored",
+};
 const moment = require("moment");
 const PermitList = () => {
   const [createModalOpen, setCreateModalOpen] = useState(false);
@@ -16,6 +29,7 @@ const PermitList = () => {
     pageIndex: 0,
     pageSize: 5,
   });
+  const [isEdit, setEdit] = useState(false);
 
   const { data, isError, isFetching, isLoading, refetch } = Con.Get({
     tableData: "table-data",
@@ -26,24 +40,25 @@ const PermitList = () => {
     sorting: sorting,
   });
   const [tableData, setTableData] = useState([]);
+  const [rowVal, setRowVal] = useState();
+
   const handleCreateNewRow = (values) => {
     tableData.push(values);
     setTableData([...tableData]);
   };
 
-  const onRefetch = () => {
+  /*  const onRefetch = () => {
     refetch();
-  };
+  }; */
 
-  const handleSaveRowEdits = async ({ exitEditingMode, row, values }) => {
+  /*  const handleSaveRowEdits = async ({ exitEditingMode, row, values }) => {
     Con.Update(values);
     tableData[row.index] = values;
-    //send/receive api updates here, then refetch or update local table data for re-render
     onRefetch();
     setTableData([...tableData]);
 
-    exitEditingMode(); //required to exit editing mode and close modal
-  };
+    exitEditingMode(); 
+  }; */
 
   const handleDeleteRow = useCallback(
     (row) => {
@@ -52,7 +67,18 @@ const PermitList = () => {
       if (!confirm(`Are you sure you want to delete ${row.getValue("businessName")}`)) {
         return;
       }
-      Con.Delete(row.getValue("permitNum"));
+      var permitNum = row.getValue("permitNum");
+      /*    var x = Con.Delete(permitNum);
+      console.log(x); */
+      (async () => {
+        var d = await Con.Delete(permitNum);
+        var response = JSON.parse(d.request.response);
+        if (response.affectedRows > 0) {
+          toast.success("Successfully deleted " + permitNum, toasterCss);
+        }
+      })();
+
+      /*  toast.success(!isEdit ? "Successfully added " + data.data.insertId : "Record successfully updated", toasterCss); */
       //send api delete request here, then refetch or update local table data for re-render
       tableData.splice(row.index, 1);
       setTableData([...tableData]);
@@ -99,6 +125,14 @@ const PermitList = () => {
         header: "Valid Until",
       },
       {
+        accessorKey: "latitude",
+        header: "Lat",
+      },
+      {
+        accessorKey: "longitude",
+        header: "Long",
+      },
+      {
         accessorKey: "attachment1",
         header: "Attachment1",
         columnDefType: "file",
@@ -117,24 +151,55 @@ const PermitList = () => {
     []
   );
 
-  const openEdit = (row, table) => {
+  const openEdit = (row, table, mode) => {
     var currentRow = [];
     let dateIssued = moment();
-
     for (const [key, value] of Object.entries(row.original)) {
       if (value != null) {
-        let x = moment(value);
-        currentRow[key] = key === "valid" ? x.format("MMMM DD, YYYY") : value;
+        /*   let x = moment(value); */
+        currentRow[key] = value;
       } else {
-        currentRow[key] = key === "issued" ? dateIssued.format("MMMM DD, YYYY") : "";
+        currentRow[key] = key === "valid" || key === "issued" ? dateIssued.format("MMMM DD, YYYY") : "";
       }
     }
 
     const result = Object.fromEntries(Object.entries(currentRow));
     row["original"] = result;
     row["_valuesCache"] = result;
-    console.log(row);
-    table.setEditingRow(row);
+    setRowVal(row.original);
+
+    /*console.log(result); */
+    setEdit(true);
+    setCreateModalOpen(true);
+
+    /*  table.setEditingRow(row); */
+  };
+
+  const openAdd = (table) => {
+    /*    console.log(table.table.getAllColumns()); */
+    /*     var currentRow = [];
+    let dateIssued = moment();
+    console.log(first);
+    for (const [key, value] of Object.entries(row.original)) {
+      if (value != null) {
+     
+        currentRow[key] = "";
+      } else {
+        currentRow[key] = key === "valid" || key === "issued" ? dateIssued.format("MMMM DD, YYYY") : "";
+      }
+    }
+
+    const result = Object.fromEntries(Object.entries(currentRow));
+    row["original"] = result;
+    row["_valuesCache"] = result;
+    setRowVal(row.original); */
+    setRowVal({});
+    setEdit(false);
+    setCreateModalOpen(true);
+  };
+
+  const handleExport = (tableData) => {
+    <CSVLink data={tableData} />;
   };
 
   return (
@@ -159,20 +224,35 @@ const PermitList = () => {
             : undefined
         }
         onColumnFiltersChange={setColumnFilters}
-        onEditingRowSave={handleSaveRowEdits}
+        /*  onEditingRowSave={handleSaveRowEdits} */
         /* onGlobalFilterChange={setGlobalFilter} */
         onPaginationChange={setPagination}
         onSortingChange={setSorting}
-        renderTopToolbarCustomActions={() => (
+        renderTopToolbarCustomActions={(table) => (
           <Box>
             <Tooltip arrow title='Refresh Data'>
               <IconButton onClick={() => refetch()}>
                 <RefreshIcon />
               </IconButton>
             </Tooltip>
-            <Button color='secondary' onClick={() => setCreateModalOpen(true)} variant='contained'>
+            <Button color='secondary' onClick={(e) => openAdd(table)} variant='contained'>
               New Permit
             </Button>
+            <CSVLink data={data?.data ?? []} style={{ textDecoration: "none" }}>
+              <Button
+                sx={{ ml: 3 }}
+                color='secondary'
+                variant='contained'
+                onClick={() => handleExport(data?.data ?? [])}
+              >
+                Export to CSV
+              </Button>
+            </CSVLink>
+            {/*     <CSVLink data={{ asd: "asdadasd" }} onClick={handleExport}>
+              <Button sx={{ ml: 3 }} color='secondary' variant='contained'>
+                Export to CSV
+              </Button>
+            </CSVLink> */}
           </Box>
         )}
         renderRowActions={({ cell, row, table }) => (
@@ -182,11 +262,11 @@ const PermitList = () => {
                 <Edit />
               </IconButton>
             </Tooltip>
-            <Tooltip arrow placement='left' title='Edit'>
+            {/*  <Tooltip arrow placement='left' title='Edit'>
               <IconButton onClick={() => table.setEditingRow(row)}>
                 <Edit />
               </IconButton>
-            </Tooltip>
+            </Tooltip> */}
             <Tooltip arrow placement='right' title='Delete'>
               <IconButton color='error' onClick={() => handleDeleteRow(row)}>
                 <Delete />
@@ -206,7 +286,17 @@ const PermitList = () => {
         }}
       />
 
-      <PermitForm columns={columns} open={createModalOpen} onClose={() => setCreateModalOpen(false)} onSubmit={handleCreateNewRow} onRefetch={refetch}></PermitForm>
+      {createModalOpen && (
+        <PermitForm
+          columns={columns}
+          open={createModalOpen}
+          onClose={() => setCreateModalOpen(false)}
+          onSubmit={handleCreateNewRow}
+          onRefetch={refetch}
+          rowVal={rowVal}
+          isEdit={isEdit}
+        />
+      )}
     </Box>
   );
 };
