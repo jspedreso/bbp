@@ -1,12 +1,33 @@
 /* eslint-disable no-lone-blocks */
 import React, { useState } from "react";
-import { Button, Select, MenuItem, Dialog, Box, DialogActions, DialogContent, DialogTitle, Stack, TextField, Grid } from "@mui/material";
+import {
+  Button,
+  Select,
+  MenuItem,
+  Dialog,
+  Box,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  Stack,
+  TextField,
+  Grid,
+} from "@mui/material";
 import { useMutation } from "@tanstack/react-query";
 import { Con } from "../../controller/User";
 import { toast } from "react-toastify";
 import { useForm, Controller } from "react-hook-form";
 
-const toasterCss = { position: "top-right", autoClose: 5000, hideProgressBar: false, closeOnClick: true, pauseOnHover: true, draggable: true, progress: undefined, theme: "colored" };
+const toasterCss = {
+  position: "top-right",
+  autoClose: 5000,
+  hideProgressBar: false,
+  closeOnClick: true,
+  pauseOnHover: true,
+  draggable: true,
+  progress: undefined,
+  theme: "colored",
+};
 
 const UserForm = ({ open, columns, onClose, onSubmit, onRefetch, rowVal, isEdit }) => {
   var title = isEdit ? "Edit" : "Create New";
@@ -75,10 +96,26 @@ const UserForm = ({ open, columns, onClose, onSubmit, onRefetch, rowVal, isEdit 
                   gap: "1.5rem",
                 }}
               >
-                <Controller render={({ field }) => <TextField {...field} label='UserId' />} name='userId' control={control} />
-                <Controller render={({ field }) => <TextField {...field} label='Firstname' />} name='firstName' control={control} />
-                <Controller render={({ field }) => <TextField {...field} label='Middlename' />} name='middleName' control={control} />
-                <Controller render={({ field }) => <TextField {...field} label='Lastname' />} name='lastName' control={control} />
+                <Controller
+                  render={({ field }) => <TextField {...field} label='UserId' />}
+                  name='userId'
+                  control={control}
+                />
+                <Controller
+                  render={({ field }) => <TextField {...field} label='Firstname' />}
+                  name='firstName'
+                  control={control}
+                />
+                <Controller
+                  render={({ field }) => <TextField {...field} label='Middlename' />}
+                  name='middleName'
+                  control={control}
+                />
+                <Controller
+                  render={({ field }) => <TextField {...field} label='Lastname' />}
+                  name='lastName'
+                  control={control}
+                />
                 <Controller
                   render={({ field }) => (
                     <Select
@@ -96,8 +133,16 @@ const UserForm = ({ open, columns, onClose, onSubmit, onRefetch, rowVal, isEdit 
                   name='userType'
                   control={control}
                 />
-                <Controller render={({ field }) => <TextField {...field} label='Username' />} name='username' control={control} />
-                <Controller render={({ field }) => <TextField {...field} label='Password' type='password' />} name='password' control={control} />
+                <Controller
+                  render={({ field }) => <TextField {...field} label='Username' />}
+                  name='username'
+                  control={control}
+                />
+                <Controller
+                  render={({ field }) => <TextField {...field} label='Password' type='password' />}
+                  name='password'
+                  control={control}
+                />
                 {/*  <Controller render={({ field }) => <TextField {...field} label='Pasword' />} name={columns[6].accessorKey} control={control} /> */}
                 {/*  <Controller render={({ field }) => <TextField {...field} label='Password' />} name='password' control={control} /> */}
                 {/* {columns.map((column) => (

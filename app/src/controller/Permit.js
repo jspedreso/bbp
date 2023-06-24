@@ -15,7 +15,6 @@ const Permit = {
             colFilters: props.colFilters,
           },
         });
-
         return res;
       },
     });

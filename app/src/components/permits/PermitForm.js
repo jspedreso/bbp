@@ -1,6 +1,19 @@
 /* eslint-disable no-lone-blocks */
 import React, { useState } from "react";
-import { Button, Dialog, Box, DialogActions, DialogContent, DialogTitle, Stack, TextField, Select, MenuItem, InputLabel, Link } from "@mui/material";
+import {
+  Button,
+  Dialog,
+  Box,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  Stack,
+  TextField,
+  Select,
+  MenuItem,
+  InputLabel,
+  Link,
+} from "@mui/material";
 import { toast } from "react-toastify";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
@@ -28,7 +41,16 @@ const center = {
 
 
  */
-const toasterCss = { position: "top-right", autoClose: 5000, hideProgressBar: false, closeOnClick: true, pauseOnHover: true, draggable: true, progress: undefined, theme: "colored" };
+const toasterCss = {
+  position: "top-right",
+  autoClose: 5000,
+  hideProgressBar: false,
+  closeOnClick: true,
+  pauseOnHover: true,
+  draggable: true,
+  progress: undefined,
+  theme: "colored",
+};
 
 const PermitForm = ({ open, columns, onClose, onSubmit, onRefetch, rowVal, isEdit }) => {
   /*  console.log(rowVal !== undefined ? rowVal : "No Value"); */
@@ -154,12 +176,36 @@ const PermitForm = ({ open, columns, onClose, onSubmit, onRefetch, rowVal, isEdi
                     mt: 1,
                   }}
                 >
-                  <Controller render={({ field }) => <TextField {...field} label='Permit Num' />} name={columns[0].accessorKey} control={control} />
-                  <Controller render={({ field }) => <TextField {...field} label='Business Name' />} name={columns[1].accessorKey} control={control} />
-                  <Controller render={({ field }) => <TextField {...field} label='Nature of Business' />} name={columns[2].accessorKey} control={control} />
-                  <Controller render={({ field }) => <TextField {...field} label='Location' />} name={columns[3].accessorKey} control={control} />
-                  <Controller render={({ field }) => <TextField {...field} label='Proprietor' />} name={columns[4].accessorKey} control={control} />
-                  <Controller render={({ field }) => <TextField {...field} label='Address' multiline rows={8} />} name={columns[5].accessorKey} control={control} />
+                  <Controller
+                    render={({ field }) => <TextField {...field} label='Permit Num' />}
+                    name={columns[0].accessorKey}
+                    control={control}
+                  />
+                  <Controller
+                    render={({ field }) => <TextField {...field} label='Business Name' />}
+                    name={columns[1].accessorKey}
+                    control={control}
+                  />
+                  <Controller
+                    render={({ field }) => <TextField {...field} label='Nature of Business' />}
+                    name={columns[2].accessorKey}
+                    control={control}
+                  />
+                  <Controller
+                    render={({ field }) => <TextField {...field} label='Location' />}
+                    name={columns[3].accessorKey}
+                    control={control}
+                  />
+                  <Controller
+                    render={({ field }) => <TextField {...field} label='Proprietor' />}
+                    name={columns[4].accessorKey}
+                    control={control}
+                  />
+                  <Controller
+                    render={({ field }) => <TextField {...field} label='Address' multiline rows={8} />}
+                    name={columns[5].accessorKey}
+                    control={control}
+                  />
                 </Stack>
               </Grid>
               <Divider />
@@ -186,7 +232,13 @@ const PermitForm = ({ open, columns, onClose, onSubmit, onRefetch, rowVal, isEdi
 
                   <FormControl fullWidth>
                     <InputLabel id='statusLabel'>Status</InputLabel>
-                    <Select defaultValue={isEdit ? rowVal.status : "Operational"} key={columns[6].accessorKey} name='status' label='Status' onChange={handleStatusChange}>
+                    <Select
+                      defaultValue={isEdit ? rowVal.status : "Operational"}
+                      key={columns[6].accessorKey}
+                      name='status'
+                      label='Status'
+                      onChange={handleStatusChange}
+                    >
                       <MenuItem value='Operational'>Operational</MenuItem>
                       <MenuItem value='Closed'>Closed</MenuItem>
                       <MenuItem value='Expired'>Expired</MenuItem>
@@ -209,8 +261,20 @@ const PermitForm = ({ open, columns, onClose, onSubmit, onRefetch, rowVal, isEdi
                     </Select>
                   </FormControl> */}
                   <LocalizationProvider dateAdapter={AdapterDayjs}>
-                    <DesktopDatePicker label='Date Issued' inputFormat='MM/DD/YYYY' name={columns[7].accessorKey} onChange={handleChange} renderInput={(params) => <TextField {...params} />} />
-                    <DesktopDatePicker label='Date Valid' inputFormat='MM/DD/YYYY' name={columns[8].accessorKey} onChange={handleChange} renderInput={(params) => <TextField {...params} />} />
+                    <DesktopDatePicker
+                      label='Date Issued'
+                      inputFormat='MM/DD/YYYY'
+                      name={columns[7].accessorKey}
+                      onChange={handleChange}
+                      renderInput={(params) => <TextField {...params} />}
+                    />
+                    <DesktopDatePicker
+                      label='Date Valid'
+                      inputFormat='MM/DD/YYYY'
+                      name={columns[8].accessorKey}
+                      onChange={handleChange}
+                      renderInput={(params) => <TextField {...params} />}
+                    />
                     {/*  <DatePicker
                       label='Date Issued'
                       name={columns[7].accessorKey}
@@ -223,8 +287,16 @@ const PermitForm = ({ open, columns, onClose, onSubmit, onRefetch, rowVal, isEdi
                     {/*   <DatePicker label='Date Valid' value={validDate} name={columns[8].accessorKey} onChange={handleChange} renderInput={(params) => <TextField {...params} />} /> */}
                   </LocalizationProvider>
 
-                  <Controller render={({ field }) => <TextField {...field} label='longitude' />} name={columns[9].accessorKey} control={control} />
-                  <Controller render={({ field }) => <TextField {...field} label='latitude' />} name={columns[10].accessorKey} control={control} />
+                  <Controller
+                    render={({ field }) => <TextField {...field} label='longitude' />}
+                    name={columns[9].accessorKey}
+                    control={control}
+                  />
+                  <Controller
+                    render={({ field }) => <TextField {...field} label='latitude' />}
+                    name={columns[10].accessorKey}
+                    control={control}
+                  />
                   <Link href='#' component='button' variant='body2' onClick={getCoordinates}>
                     Open in Google Earth
                   </Link>

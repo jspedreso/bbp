@@ -9,7 +9,16 @@ import PermitForm from "./PermitForm";
 import { Con } from "../../controller/Permit";
 /* import { resolveTo } from "@remix-run/router"; */
 
-const toasterCss = { position: "top-right", autoClose: 5000, hideProgressBar: false, closeOnClick: true, pauseOnHover: true, draggable: true, progress: undefined, theme: "colored" };
+const toasterCss = {
+  position: "top-right",
+  autoClose: 5000,
+  hideProgressBar: false,
+  closeOnClick: true,
+  pauseOnHover: true,
+  draggable: true,
+  progress: undefined,
+  theme: "colored",
+};
 const moment = require("moment");
 const PermitList = () => {
   const [createModalOpen, setCreateModalOpen] = useState(false);
@@ -230,7 +239,12 @@ const PermitList = () => {
               New Permit
             </Button>
             <CSVLink data={data?.data ?? []} style={{ textDecoration: "none" }}>
-              <Button sx={{ ml: 3 }} color='secondary' variant='contained' onClick={() => handleExport(data?.data ?? [])}>
+              <Button
+                sx={{ ml: 3 }}
+                color='secondary'
+                variant='contained'
+                onClick={() => handleExport(data?.data ?? [])}
+              >
                 Export to CSV
               </Button>
             </CSVLink>
@@ -273,7 +287,15 @@ const PermitList = () => {
       />
 
       {createModalOpen && (
-        <PermitForm columns={columns} open={createModalOpen} onClose={() => setCreateModalOpen(false)} onSubmit={handleCreateNewRow} onRefetch={refetch} rowVal={rowVal} isEdit={isEdit} />
+        <PermitForm
+          columns={columns}
+          open={createModalOpen}
+          onClose={() => setCreateModalOpen(false)}
+          onSubmit={handleCreateNewRow}
+          onRefetch={refetch}
+          rowVal={rowVal}
+          isEdit={isEdit}
+        />
       )}
     </Box>
   );

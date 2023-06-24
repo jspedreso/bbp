@@ -181,7 +181,15 @@ const UserList = () => {
         }}
       />
       {createModalOpen && (
-        <UserForm columns={columns} open={createModalOpen} onClose={() => setCreateModalOpen(false)} onSubmit={handleCreateNewRow} onRefetch={() => {}} rowVal={rowVal} isEdit={isEdit} />
+        <UserForm
+          columns={columns}
+          open={createModalOpen}
+          onClose={() => setCreateModalOpen(false)}
+          onSubmit={handleCreateNewRow}
+          onRefetch={() => {}}
+          rowVal={rowVal}
+          isEdit={isEdit}
+        />
       )}
     </Box>
   );
